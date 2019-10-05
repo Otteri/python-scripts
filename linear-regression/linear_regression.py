@@ -1,12 +1,11 @@
 import numpy as np
 import pandas as pd
 
-# It is beforehandedly known that the downtown location
+# It is beforehandedly known that the downtown location is
 TOWN_CENTER = [1.43, 0.63] # x = 1.43 km and y = 0.63 km
 
-# Script estimates house prices by creating a linear regression model
-# end then using the model for given parameters
-# Model is created from Excel data.
+# Script estimates house prices by first creating a linear regression model
+# by using the data in input_data file and then it uses the learnt model to given params
 # @params: [ area, construction year, room number, floor amount, x-coord., y-coord. ]
 # @return: price estimate
 def estimate_price(params):
