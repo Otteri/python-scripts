@@ -9,7 +9,7 @@ def ransac2d(points, distance_threshold, N, inlier_threshold):
     @param distance_threshold: point must be within this threshold to be counted as a inlier
     @param N: number of iterations to be done.
     @param inlier_threshold: amount of inliers needed for fit to be concidered good enough.
-    @return m,b: fitted line coefficients (y = mx+b).
+    @return m, b: fitted line coefficients (y = mx + b).
     '''
     pts = np.array(points)
     point_count = len(pts[0])
@@ -43,7 +43,7 @@ def ransac2d(points, distance_threshold, N, inlier_threshold):
         # 5) If count > threshold, then refit, otherwise repeat
         if inlier_count > inlier_threshold:
             inliers = pts[:, inlier_idxs].squeeze().T
-            theta_values[i], p_values[i] = fitline(inliers, pts.T) # TODO: SHOULD BE INLIERS INSTEAD OF ALL PTS
+            theta_values[i], p_values[i] = fitline(inliers, pts.T)
 
     # Get the best coefficients
     max_inlier_idx = np.argmax(inlier_counts)
