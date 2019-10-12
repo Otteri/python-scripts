@@ -43,7 +43,7 @@ def ransac2d(points, distance_threshold, N, inlier_threshold):
         # 5) If count > threshold, then refit, otherwise repeat
         if inlier_count > inlier_threshold:
             inliers = pts[:, inlier_idxs].squeeze().T
-            theta_values[i], p_values[i] = fitline(inliers, pts.T) # TODO: SHOULD BE INLIERS INSTEAD OF ALL PTS
+            theta_values[i], p_values[i] = fitline(inliers, pts.T)
 
     # Get the best coefficients
     max_inlier_idx = np.argmax(inlier_counts)
