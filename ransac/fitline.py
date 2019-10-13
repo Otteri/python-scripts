@@ -53,3 +53,4 @@ def fitline(data_array, pts):
 # Note: Instead of finding eigenvectors,
 # we could also do fitting by using total least squares (TLS)
 
+# Note: Instead of PCA we could also do fitting by using Total least squares (TLS)
