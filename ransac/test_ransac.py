@@ -21,12 +21,12 @@ if __name__ == "__main__":
     plt.xlim((0, 100)); plt.ylim((0, 100))
 
     # Run RANSAC
-    N = 50
-    t = 5
-    d = round(0.05*np.size(points,1))
+    N = 100 # iterations
+    t = 3   # distance margin for inliers
+    d = 5   # inliers needed for good fit
     m, b = ransac2d(points, t, N, d)
 
-    # Plot the result
+    # Plot the result line
     # +/-15 to make the line look continuous in the plot view
     X = np.linspace(min(points[0,:])-15, max(points[0,:])+15, 100)
     y = m*X+b
