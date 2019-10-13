@@ -2,19 +2,19 @@ import numpy as np
 from random import randint
 from fitline import fitline
 
+#RANSAC fits a line to given points. The method is robust and tolerates faulty points.
+#@param points: array of data points (x,y) to be fitted.
+#@param distance_threshold: point must be within this threshold to be counted as a inlier
+#@param N: number of iterations to be done.
+#@param inlier_threshold: amount of inliers needed for fit to be concidered good enough.
+#@return m,b: fitted line coefficients (y = mx+b).
 def ransac2d(points, distance_threshold, N, inlier_threshold):
-    '''
-    RANSAC fits a line to given points. The method is robust and tolerates faulty points.
-    @param points: array of data points to be fitted.
-    @param distance_threshold: point must be within this threshold to be counted as a inlier
-    @param N: number of iterations to be done.
-    @param inlier_threshold: amount of inliers needed for fit to be concidered good enough.
-    @return m,b: fitted line coefficients (y = mx+b).
-    '''
     pts = np.array(points)
     point_count = len(pts[0])
     if N < 1 or point_count < 2:
         raise ValueError("Bad function arguments")
+
+    # Preallocate space
     inlier_counts = np.zeros((N))
     theta_values = np.zeros((N))
     p_values = np.zeros((N))

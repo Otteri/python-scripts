@@ -1,48 +1,55 @@
 from numpy import array
 import numpy as np
 
-# @param data_array: column vector of data points (x,y)
-# @return pca_components_: eigenvectors (positives first)
+# Finds eigenvectors and values by doing principal component analysis
+# @param data_array: data points (x,y) in column vector
+# @return: 2D array of eigenvalues and eigenvectors
 def sklearn_pca(data_array):
-  from sklearn.decomposition import PCA
-  pca = PCA(2)
-  pca.fit(data_array)
-  eigenvectors = pca.components_
-  return eigenvectors
+    from sklearn.decomposition import PCA
+    pca = PCA(2)
+    pca.fit(data_array)
+    eigenvalues = pca.explained_variance_
+    eigenvectors = pca.components_.T # .T: to match w/ numpy
+    return eigenvalues, eigenvectors
 
+# Does the same as the above function, but without sklearn and PCA
+# @param data_array: data points (x,y) in column vector
+# @return: 2D array of eigenvalues and eigenvectors
 def get_eigenvector(data_array):
-  centered_matrix = data_array.T - data_array.T.mean(axis=1)[:, np.newaxis]
-  cov = np.dot(centered_matrix, centered_matrix.T)
-  eigenvalues, eigenvectors = np.linalg.eig(cov)
+    centered_matrix = data_array.T - data_array.T.mean(axis=1)[:, np.newaxis]
+    cov = np.dot(centered_matrix, centered_matrix.T)
+    eigenvalues, eigenvectors = np.linalg.eig(cov)
+    return eigenvalues, eigenvectors
 
-  # linalg gives the eigenvectors in random order, thus the
-  # output must be sorted, so the trignometric calculations work
-  # TODO: return sorted eigenvector
-  return eigenvectors
+# Often, the eigenvalues and vectors are not given in any particular order,
+# because only the magnitudes are intresting. If x is valid eigenvector, so is -x.
+# However, the 'sign randomnes' can cause problems with other calculations, so some
+# standard representation must be established. This function sorts the eigenvalues
+# from the greatest to smallest. The eigenvectors are ordered accordingly too.
+def eigen_sort(eigenvalues, eigenvectors):
+    idx = eigenvalues.argsort()[::-1]
+    eigenvalues = eigenvalues[idx]
+    eigenvectors = eigenvectors[:,idx]
+    return eigenvalues, eigenvectors
 
-
-# Finds a line that fits to the given data points
-# p = x*cos(theta) + y*sin(theta)
+# Finds a line that fits to given data
+# Line is presented in normal form: p = x*cos(theta) + y*sin(theta)
 # @param data_array: column vector of data points (x,y)
 # @return theta: angle
 # @return p: length of perpendicular
-def fitline(data_array, pts): # pts unnecessary?
+def fitline(data_array, pts):
+    try:
+        _, eigenvectors = eigen_sort(*sklearn_pca(pts))
+    except:
+        _, eigenvectors = eigen_sort(*get_eigenvector(pts))
 
-  #try:
-  #  eigenvectors = sklearn_pca(pts)
-  #except:
-  #  eigenvectors = get_eigenvector(data_array)
+    ev1 = np.array(eigenvectors[:,1]) # pick one vector
+    theta = -np.arctan2(*ev1)
+    ev1_col = np.matrix([*ev1]).T # create column vector
+    mean = np.matrix([np.mean(data_array, axis=0)])
+    p = mean * ev1_col
+    return theta, p
 
-  eigenvectors = get_eigenvector(data_array)
-
-  ev1 = np.array(eigenvectors[:,0]) # magnitudes are same, just pick 1st
-  #ev1 = ev1[::-1] # flip order
-  theta = -np.arctan2(*ev1)
-  ev1_c = np.matrix([*ev1]).T # create column vector
-  mean = np.matrix([np.mean(data_array, axis=0)])
-  p = mean * ev1_c
-  return theta, p
-
-
-# Note: Instead of PCA we could also do fitting by using Total least squares (TLS)
+# Note: Instead of finding eigenvectors,
+# we could also do fitting by using total least squares (TLS)
 
